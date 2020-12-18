@@ -1,0 +1,193 @@
+.node {
+  width: 25px;
+  height: 25px;
+  border: 1px solid rgb(175, 216, 248);
+  cursor: pointer;
+}
+.recently-built {
+  background-image: linear-gradient(
+    45deg,
+    #d4d0db 25%,
+    #5f5370 25%,
+    #5f5370 50%,
+    #d4d0db 50%,
+    #d4d0db 75%,
+    #5f5370 75%,
+    #5f5370 100%
+  ) !important;
+  background-size: 8.49px 8.49px !important;
+}
+
+.end-zone {
+  border-radius: 50% !important;
+  background: rgb(44, 219, 96);
+  animation: endZoneAnimation 2s ease infinite;
+}
+
+.player1 {
+  background: rgb(37, 67, 233);
+  border-radius: 100% !important;
+  transform: scale(0.8);
+  transition: all 0.5s ease;
+}
+.player2 {
+  background: rgb(226, 18, 115);
+  border-radius: 100% !important;
+  transform: scale(0.8);
+  transition: all 0.5s ease;
+}
+
+@keyframes visitedAnimation {
+  0% {
+    transform: scale(0.3);
+    background-color: rgba(0, 0, 66, 0.75);
+    border-radius: 100%;
+  }
+
+  50% {
+    background-color: rgba(17, 104, 217, 0.75);
+  }
+
+  75% {
+    transform: scale(1.2);
+    background-color: rgba(0, 217, 159, 0.75);
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: rgba(0, 190, 218, 0.75);
+  }
+}
+
+.node-wall {
+  background-color: rgb(12, 53, 71);
+  transition: all 1s ease !important;
+}
+/* .node-wall:hover {
+  transition: all 1s ease !important;
+  transform: scale(0.9) !important;
+} */
+
+.recently-built {
+  animation-name: shortestPath;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+@keyframes shortestPath {
+  0% {
+    transform: scale(0.6);
+    background-color: rgb(255, 254, 106);
+  }
+
+  50% {
+    transform: scale(1.3);
+    background-color: rgb(255, 254, 106);
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: rgb(255, 254, 106);
+  }
+}
+
+/* .tile:hover {
+  background: rgb(240, 238, 238) !important;
+} */
+
+.tile {
+  animation-name: tileAnimation;
+  animation-duration: 0.4s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+  background-color: white;
+}
+@keyframes tileAnimation {
+  0% {
+    transform: scale(0.3);
+    background-color: white;
+    border-radius: 100%;
+  }
+
+  50% {
+    background-color: rgba(17, 104, 217, 0.75);
+  }
+
+  75% {
+    transform: scale(1.2);
+    background-color: rgba(18, 151, 151, 0.75);
+  }
+
+  100% {
+    transform: scale(1);
+    background-color: white;
+  }
+}
+
+.node-wall {
+  animation-name: wallAnimation;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+
+@keyframes wallAnimation {
+  0% {
+    transform: scale(0.2);
+    border-radius: 20%;
+    background-color: rgb(12, 53, 71);
+  }
+  25% {
+    border-radius: 30%;
+    transform: scale(0.8);
+    background-color: rgb(12, 53, 71);
+  }
+
+  50% {
+    border-radius: 50%;
+    transform: scale(1.4);
+    background-color: rgb(12, 53, 71);
+  }
+  75% {
+    border-radius: 20%;
+    transform: scale(0.5);
+    background-color: rgb(12, 53, 71);
+  }
+  100% {
+    border-radius: unset;
+    transform: scale(1);
+    background-color: rgb(12, 53, 71);
+  }
+}
+
+@keyframes endZoneAnimation {
+  0% {
+    transform: scale(0.2);
+  }
+  25% {
+    transform: scale(0.6);
+  }
+
+  50% {
+    transform: scale(1);
+  }
+  75% {
+    transform: scale(0.6);
+  }
+  100% {
+    transform: scale(0.2);
+  }
+}
