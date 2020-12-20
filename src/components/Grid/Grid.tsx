@@ -18,6 +18,7 @@ interface Node {
   isTornadoY: boolean;
   nextTornadoX: boolean;
   nextTornadoY: boolean;
+  isBonus: boolean;
 }
 
 interface NodeCoordinates {
@@ -27,7 +28,6 @@ interface NodeCoordinates {
 const playerID = uuidv4();
 
 export default function Grid() {
-
   const [socket, setSocket] = useState(
     io.connect("http://localhost:5000/", {
       transports: ["websocket", "polling"],
@@ -54,6 +54,9 @@ export default function Grid() {
 
   const [tornadoList, setTornadoList] = useState<NodeCoordinates[]>([]);
   const [activeTornados, setActiveTornados] = useState<NodeCoordinates[]>([]);
+  const [activeBonus, setActiveBonus] = useState<NodeCoordinates[]>([]);
+  const [bonusCoordinates, setBonusCoordinates] = useState<NodeCoordinates>();
+
   const player1X = 23;
   const player1Y = 1;
   const player2X = 1;
@@ -171,9 +174,11 @@ export default function Grid() {
       isTornadoY: false,
       nextTornadoX: false,
       nextTornadoY: false,
+      isBonus: false,
     };
   };
   const toggleWall = (row: number, col: number) => {
+    if (grid[row][col].isPlayer1 || grid[row][col].isPlayer2) return;
     const newGrid: Node[][] = grid.slice();
     const node: Node = newGrid[row][col];
     if (!node.recentlyBuilt || !node.isWall) {
@@ -188,12 +193,13 @@ export default function Grid() {
         console.log(recentlyBuiltWalls);
       }
 
-      setActionsLeft(actionsLeft - 1);
       setGrid(newGrid);
     }
     if (node.isWall) {
       newGrid[row][col].tile = true;
     }
+    handleEndTurn(playerX, playerY, actionsLeft - 1);
+    setActionsLeft(actionsLeft - 1);
     return newGrid;
   };
 
@@ -256,13 +262,14 @@ export default function Grid() {
           if (newGrid[i] && newGrid[i][j]) {
             (function (i: number, j: number) {
               setTimeout(function () {
-                newGrid[i][j].isWall = true;
+                if (i === 12 && j === 12) newGrid[i][j].isWall = false;
+                else newGrid[i][j].isWall = true;
                 animateToggleWall(i, j);
                 if (i === maxGridX - 1 && j === maxGridY - 1) {
                   setGridGenerated(true);
                   setGrid(newGrid);
                 }
-              }, (i + j) * 100);
+              }, (i + j) * 90);
             })(i, j);
           }
         }
@@ -289,8 +296,13 @@ export default function Grid() {
 
       generateNextTornado();
       generateTornado();
+      if (nbTurns % 3 == 0 || nbTurns == 1) generateBonus();
 
-      if (nbTurns > 0) clearTornado();
+      if (nbTurns % 4 == 0) clearBonus();
+
+      if (nbTurns > 0) {
+        clearTornado();
+      }
       socket.emit("action-done", grid, playerX, playerY);
       console.log({ nbTurns });
     }
@@ -325,7 +337,7 @@ export default function Grid() {
     }
   }, [gridGenerated]);
 
-  // const randomNumber = (min: number, max: number, iter: number) => {
+  // const randomTornadoSpawnCoordinate = (min: number, max: number, iter: number) => {
   //   let randomArray: Array<number> = [];
   //   let i: number = 0;
   //   for (i = 0; i < iter; i++) {
@@ -334,11 +346,19 @@ export default function Grid() {
   //   }
   //   return randomArray;
   // };
-  const randomNumber = (min: number, max: number, isX: boolean = true) => {
+  const randomTornadoSpawnCoordinate = (
+    min: number,
+    max: number,
+    isX: boolean = true
+  ) => {
     const chance: number = Math.random();
     if (chance > 0.4 && nbTurns > 0)
       if (isX) return opponentX;
       else return opponentY;
+    return Math.trunc(Math.random() * (max - min) + min);
+  };
+
+  const randomBonusSpawnCoordinate = (min: number, max: number) => {
     return Math.trunc(Math.random() * (max - min) + min);
   };
   const getPurcentage = (value: number, purcent: number) => {
@@ -357,39 +377,27 @@ export default function Grid() {
     if (grid.length > 0 && actionsLeft > 0 && isMyTurn)
       switch (direction) {
         case "up":
-          if (
-            !grid[playerX - 1][playerY].isWall ||
-            grid[playerX - 1][playerY].isEndZone
-          ) {
+          if (!grid[playerX - 1][playerY].isWall) {
             movePlayer(playerX - 1, playerY);
           }
 
           break;
         case "down":
-          if (
-            !grid[playerX + 1][playerY].isWall ||
-            grid[playerX - 1][playerY].isEndZone
-          ) {
+          if (!grid[playerX + 1][playerY].isWall) {
             movePlayer(playerX + 1, playerY);
           }
 
           break;
 
         case "right":
-          if (
-            !grid[playerX][playerY + 1].isWall ||
-            grid[playerX - 1][playerY].isEndZone
-          ) {
+          if (!grid[playerX][playerY + 1].isWall) {
             movePlayer(playerX, playerY + 1);
           }
 
           break;
 
         case "left":
-          if (
-            !grid[playerX][playerY - 1].isWall ||
-            grid[playerX - 1][playerY].isEndZone
-          ) {
+          if (!grid[playerX][playerY - 1].isWall) {
             movePlayer(playerX, playerY - 1);
           }
 
@@ -407,7 +415,7 @@ export default function Grid() {
         newGrid[x][y].isPlayer2 = true;
       }
       console.log(newGrid[playerX][playerY]);
-      setActionsLeft(actionsLeft - action);
+
       setPlayerX(x);
       setPlayerY(y);
       console.log("Moving...");
@@ -416,19 +424,35 @@ export default function Grid() {
         alert("You've WON!");
         socket.emit("action-done", newGrid, x, y);
       } else {
-        handleEndTurn(x, y);
+        handleEndTurn(x, y, checkBonus(x, y, actionsLeft - action));
       }
     }
   };
-
+  const checkBonus = (x: number, y: number, actions: number) => {
+    if (grid[x][y].isBonus) {
+      setActionsLeft(actions + 2);
+      const newGrid: Node[][] = grid.slice();
+      newGrid[x][y].isBonus = false;
+      setGrid(newGrid);
+      return actions + 2;
+    } else {
+      setActionsLeft(actions);
+      return actions;
+    }
+  };
   const handleTurn = () => {
+    resetTornadoAnimation();
     setActionsLeft(3);
     setIsMyTurn(true);
   };
-  const handleEndTurn = (x: number = playerX, y: number = playerY) => {
+  const handleEndTurn = (
+    x: number = playerX,
+    y: number = playerY,
+    actions: number
+  ) => {
     socket.emit("action-done", grid, x, y);
     setTimeout(() => {
-      if (actionsLeft - 1 === 0) {
+      if (actions === 0) {
         checkTornadoHit(x, y);
 
         setIsMyTurn(false);
@@ -436,7 +460,7 @@ export default function Grid() {
         socket.emit("turn-end", nextNodeCoordinates);
         console.log("Turn Ended");
 
-        // resetTornadoAnimation();
+        resetTornadoAnimation();
       }
     }, 500);
   };
@@ -467,14 +491,13 @@ export default function Grid() {
       console.log(grid[row][col]);
       toggleWall(row, col);
       console.log(grid[row][col]);
-      resetTornadoAnimation();
-      handleEndTurn();
+      //resetTornadoAnimation();
     }
   };
 
   const generateNextTornado = () => {
-    const row = randomNumber(1, 22, true);
-    const col = randomNumber(1, 22, false);
+    const row = randomTornadoSpawnCoordinate(1, 22, true);
+    const col = randomTornadoSpawnCoordinate(1, 22, false);
 
     console.log({ row, col });
     if (row != -1 && col != -1) {
@@ -485,7 +508,7 @@ export default function Grid() {
         if (!newGrid[i][col].isEndZone) newGrid[i][col].nextTornadoX = true;
       }
       for (let i = 0; i < maxGridY; i++) {
-        if (!newGrid[i][col].isEndZone) newGrid[row][i].nextTornadoY = true;
+        if (!newGrid[row][i].isEndZone) newGrid[row][i].nextTornadoY = true;
       }
       // var tornados: NodeCoordinates[] = tornadoList;
       // tornados.push(nextNodeCoordinates);
@@ -584,6 +607,42 @@ export default function Grid() {
       });
     }
   };
+
+  const generateBonus = () => {
+    var row, col;
+    do {
+      row = randomBonusSpawnCoordinate(1, 22);
+      col = randomBonusSpawnCoordinate(1, 22);
+    } while (
+      grid[row][col].isWall ||
+      grid[row][col].isPlayer1 ||
+      grid[row][col].isPlayer2 ||
+      grid[row][col].recentlyBuilt
+    );
+
+    if (row && col) {
+      const newGrid: Node[][] = grid.slice();
+      if (!newGrid[row][col].isEndZone && !newGrid[row][col].isEndZone)
+        newGrid[row][col].isBonus = true;
+
+      var bonuses: NodeCoordinates[] = activeBonus;
+      bonuses.push({ row: row, col: col });
+      setActiveBonus(bonuses);
+      setGrid(newGrid);
+    }
+  };
+
+  const clearBonus = () => {
+    var activeBonusVar: NodeCoordinates[] = activeBonus.slice();
+    const bonus = activeBonusVar.shift();
+    if (bonus) {
+      const newGrid: Node[][] = grid.slice();
+      newGrid[bonus.row][bonus.col].isBonus = false;
+      setGrid(newGrid);
+      setActiveBonus(activeBonusVar);
+    }
+  };
+
   // const handleMouseEnter = (row: number, col: number) => {
   //   if (!mouseIsPressed) return;
   //   const newGrid = toggleWall(grid, row, col);
@@ -602,51 +661,37 @@ export default function Grid() {
       />
       <Card className="mt-2">
         <Card.Body>
-          <div>
+          <div className="d-flex justify-content-center">
             <table className="board" id="board">
               <tbody>
                 {grid.map((row: Array<Node>, rowIdx) => {
                   return (
                     <tr key={rowIdx}>
                       {row.map((node: Node, nodeIdx: number) => {
-                        const {
-                          row,
-                          col,
-                          isWall,
-                          recentlyBuilt,
-                          isEndZone,
-                          isPlayer1,
-                          isPlayer2,
-                          tile,
-                          isTornadoX,
-                          isTornadoY,
-                          nextTornadoX,
-                          nextTornadoY,
-                        } = node;
                         return (
                           <NodeComponent
                             key={nodeIdx}
-                            col={col}
-                            isWall={isWall}
-                            isEndZone={isEndZone}
-                            isPlayer1={isPlayer1}
-                            isPlayer2={isPlayer2}
-                            recentlyBuilt={recentlyBuilt}
-                            tile={tile}
-                            isTornadoX={isTornadoX}
-                            isTornadoY={isTornadoY}
-                            nextTornadoX={nextTornadoX}
-                            nextTornadoY={nextTornadoY}
+                            col={node.col}
+                            row={node.row}
+                            isWall={node.isWall}
+                            isEndZone={node.isEndZone}
+                            isPlayer1={node.isPlayer1}
+                            isPlayer2={node.isPlayer2}
+                            recentlyBuilt={node.recentlyBuilt}
+                            tile={node.tile}
+                            isTornadoX={node.isTornadoX}
+                            isTornadoY={node.isTornadoY}
+                            nextTornadoX={node.nextTornadoX}
+                            nextTornadoY={node.nextTornadoY}
+                            isBonus={node.isBonus}
                             mouseIsPressed={mouseIsPressed}
                             onMouseDown={(row: number, col: number) =>
                               handleMouseDown(row, col)
                             }
-                          
                             // onMouseEnter={(row: number, col: number) =>
                             //   handleMouseEnter(row, col)
                             // }
                             onMouseUp={() => handleMouseUp()}
-                            row={row}
                           ></NodeComponent>
                         );
                       })}

@@ -4,7 +4,7 @@ import Routes from "../../routes";
 
 export default function NavbarComponent() {
   return (
-    <Container className="mt-2">
+    <Container className="mt-4 ">
       <Routes />
     </Container>
   );

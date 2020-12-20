@@ -3,6 +3,10 @@
   height: 25px;
   border: 1px solid rgb(175, 216, 248);
   cursor: pointer;
+  transition: background-color 0.5s ease;
+}
+.node:hover {
+  background-color: rgb(218, 207, 218);
 }
 .recently-built {
   background-image: linear-gradient(
@@ -22,6 +26,12 @@
   border-radius: 50% !important;
   background: rgb(44, 219, 96);
   animation: endZoneAnimation 2s ease infinite;
+}
+
+.bonus {
+  border-radius: 50% !important;
+  background: rgb(10, 238, 162);
+  animation: bonusAnimation 0.5s ease infinite;
 }
 
 .player1 {
@@ -60,13 +70,12 @@
 }
 
 .node-wall {
-  background-color: rgb(12, 53, 71);
-  transition: all 1s ease !important;
+  background-color: rgb(13, 53, 70);
+  transition: background-color 1s ease !important;
 }
-/* .node-wall:hover {
-  transition: all 1s ease !important;
-  transform: scale(0.9) !important;
-} */
+.node-wall:hover {
+  background-color: rgb(24, 77, 100) !important;
+}
 
 .recently-built {
   animation-name: shortestPath;
@@ -135,7 +144,7 @@
 
 .node-wall {
   animation-name: wallAnimation;
-  animation-duration: 0.3s;
+  animation-duration: 0.5s;
   animation-timing-function: ease-out;
   animation-delay: 0;
   animation-direction: alternate;
@@ -183,6 +192,27 @@
 
   50% {
     transform: scale(1);
+  }
+  75% {
+    transform: scale(0.6);
+  }
+  100% {
+    transform: scale(0.2);
+  }
+}
+
+@keyframes bonusAnimation {
+  0% {
+    transform: scale(0.2);
+    background: rgb(64, 101, 224);
+  }
+  25% {
+    background: rgb(64, 101, 224);
+    transform: scale(0.6);
+  }
+
+  50% {
+    transform: scale(0.8);
   }
   75% {
     transform: scale(0.6);

@@ -16,6 +16,7 @@ interface NodeType {
   isTornadoY: boolean;
   nextTornadoX: boolean;
   nextTornadoY: boolean;
+  isBonus: boolean;
   onMouseDown: (x: number, y: number) => void;
   onMouseUp: () => void;
 }
@@ -43,20 +44,22 @@ export default function NodeComponent(props: NodeType) {
     onMouseDown,
     onMouseUp,
     row,
+    isBonus,
   } = props;
 
   const classPlayer1 = isPlayer1 ? " player1" : "";
   const classPlayer2 = isPlayer2 ? " player2" : "";
   const wallClass =
-    isWall && !isEndZone && !isPlayer1 && !isPlayer2 ? " node-wall" : " square";
+    isWall && !isPlayer1 && !isPlayer2 ? " node-wall" : " square";
   const isEndZoneClass = isEndZone ? " end-zone" : "";
   const recentlyBuiltClass = recentlyBuilt ? " recently-built" : "";
+  const bonusClass = isBonus ? " bonus" : "";
   const classTornadoX =
-    isTornadoX && !isWall && !isPlayer1 && !isPlayer2
+    isTornadoX && !isWall && !isPlayer1 && !isPlayer2 && !isBonus
       ? " tornado-x tornado-class-x"
       : "";
   const classTornadoY =
-    isTornadoY && !isWall && !isPlayer1 && !isPlayer2
+    isTornadoY && !isWall && !isPlayer1 && !isPlayer2 && !isBonus
       ? " tornado-y tornado-class-y"
       : "";
   const classNextTornadoX =
@@ -65,7 +68,8 @@ export default function NodeComponent(props: NodeType) {
     !isTornadoY &&
     !isWall &&
     !isPlayer1 &&
-    !isPlayer2
+    !isPlayer2 &&
+    !isBonus
       ? " next-tornado-x tornado-class-x"
       : "";
   const classNextTornadoY =
@@ -74,11 +78,18 @@ export default function NodeComponent(props: NodeType) {
     !isTornadoX &&
     !isWall &&
     !isPlayer1 &&
-    !isPlayer2
+    !isPlayer2 &&
+    !isBonus
       ? " next-tornado-y tornado-class-y"
       : "";
   const tileClass =
-    !isWall && !isEndZone && !isPlayer1 && !isPlayer2 && !recentlyBuilt && tile
+    !isWall &&
+    !isEndZone &&
+    !isPlayer1 &&
+    !isPlayer2 &&
+    !recentlyBuilt &&
+    tile &&
+    !isBonus
       ? " tile"
       : "";
   const bothTornados =
@@ -86,7 +97,8 @@ export default function NodeComponent(props: NodeType) {
     !isWall &&
     !isPlayer2 &&
     !isPlayer1 &&
-    !recentlyBuilt
+    !recentlyBuilt &&
+    !isBonus
       ? " both-tornados"
       : "";
   const extraClassName =
@@ -100,7 +112,8 @@ export default function NodeComponent(props: NodeType) {
     classTornadoY +
     classNextTornadoX +
     classNextTornadoY +
-    bothTornados;
+    bothTornados +
+    bonusClass;
 
   // const extraClassName = isEndZone
   //   ? "end-zone"
