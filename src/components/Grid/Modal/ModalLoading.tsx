@@ -45,7 +45,7 @@ export default function ModaLoading(props: modalTypes) {
                   aria-label="Recipient's username"
                   aria-describedby="basic-addon2"
                   ref={(ref: any) => (myInput = ref)}
-                  value={`http://localhost:3000/play?room=private&room_id=${roomID}`}
+                  value={`https://board-game.vercel.app/play?room=private&room_id=${roomID}`}
                   readOnly
                 />
                 <InputGroup.Append>

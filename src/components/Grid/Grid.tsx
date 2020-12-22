@@ -39,7 +39,7 @@ const playerID = uuidv4();
 
 export default function Grid() {
   const [socket, setSocket] = useState(
-    io.connect("http://localhost:1337/", {
+    io.connect("https://shielded-lake-91092.herokuapp.com/", {
       transports: ["websocket", "polling"],
     })
   );
