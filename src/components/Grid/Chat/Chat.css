@@ -124,6 +124,7 @@ input:focus {
 }
 ul > li {
   width: 100%;
+  z-index: 2;
 }
 
 .sender > .text > p {
@@ -139,4 +140,11 @@ ul > li {
 }
 ::-webkit-scrollbar-track {
   border-radius: 0;
+}
+.chat-intro {
+  position: absolute;
+  top: 40%;
+  left: 10%;
+  color: rgb(216, 213, 213);
+  z-index: 0;
 }

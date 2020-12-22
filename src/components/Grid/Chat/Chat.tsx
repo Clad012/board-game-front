@@ -53,6 +53,11 @@ export default function Chat(props: ChatType) {
             />
           </div>
         </div>
+        {messages.length === 0 && (
+          <div className="chat-intro">
+            Envoyer des messages à votre adversaire
+          </div>
+        )}
       </Card.Body>
     </Card>
   );
