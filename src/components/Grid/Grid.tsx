@@ -39,7 +39,7 @@ const playerID = uuidv4();
 
 export default function Grid() {
   const [socket, setSocket] = useState(
-    io.connect("https://shielded-lake-91092.herokuapp.com/", {
+    io.connect("https://board-game-server.glitch.me/", {
       transports: ["websocket", "polling"],
     })
   );
