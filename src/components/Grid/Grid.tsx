@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import ActionBar from "./ActionBar/ActionBar";
+import ControlCard from "./ControlCard/ControlCard";
+import Chat from "./Chat/Chat";
+
+import ModalLoading from "./Modal/ModalLoading";
 import Card from "react-bootstrap/Card";
 import NodeComponent from "./Node/Node";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
+import { useLocation } from "react-router-dom";
 
 interface Node {
   col: number;
@@ -20,7 +27,10 @@ interface Node {
   nextTornadoY: boolean;
   isBonus: boolean;
 }
-
+interface MessageType {
+  text: string;
+  isSentByCurrentUser: boolean;
+}
 interface NodeCoordinates {
   row: number;
   col: number;
@@ -29,7 +39,7 @@ const playerID = uuidv4();
 
 export default function Grid() {
   const [socket, setSocket] = useState(
-    io.connect("http://localhost:5000/", {
+    io.connect("http://localhost:1337/", {
       transports: ["websocket", "polling"],
     })
   );
@@ -43,7 +53,10 @@ export default function Grid() {
   const [recentlyBuiltWalls, setRecentlyBuiltWalls] = useState<Node[]>([]);
   const [gridGenerated, setGridGenerated] = useState(false);
   const [actionsLeft, setActionsLeft] = useState(0);
+  const [showModal, setShowModal] = useState(true);
 
+  const handleClose = () => setShowModal(false);
+  const handleShow = () => setShowModal(true);
   const [
     nextNodeCoordinates,
     setNextTornadoCoordiantes,
@@ -55,7 +68,10 @@ export default function Grid() {
   const [tornadoList, setTornadoList] = useState<NodeCoordinates[]>([]);
   const [activeTornados, setActiveTornados] = useState<NodeCoordinates[]>([]);
   const [activeBonus, setActiveBonus] = useState<NodeCoordinates[]>([]);
-  const [bonusCoordinates, setBonusCoordinates] = useState<NodeCoordinates>();
+  const [roomID, setRoomID] = useState<string | null>();
+
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<MessageType[]>([]);
 
   const player1X = 23;
   const player1Y = 1;
@@ -72,25 +88,48 @@ export default function Grid() {
 
   const maxGridX = 25;
   const maxGridY = 25;
+  const location = useLocation();
 
   useEffect(() => {
-    socket.emit(
-      "leave-room",
-      "36d2f9e5-d94f-44f6-a23a-2ab5350b9ce722321",
-      playerID
-    );
-    setTimeout(() => {
-      socket.emit(
-        "join-room",
-        "36d2f9e5-d94f-44f6-a23a-2ab5350b9ce722321",
-        playerID
-      );
-    }, 2000);
+    const searchParams = new URLSearchParams(location.search);
+    console.log(searchParams.has("room"));
+    if (searchParams.has("room") && searchParams.has("room_id")) {
+      if (searchParams.get("room") == "private") {
+        setRoomID(searchParams.get("room_id"));
+        socket.emit(
+          "search-for-game",
+          "private",
+          playerID,
+          searchParams.get("room_id")
+        );
+      }
+    } else {
+      socket.emit("search-for-game", "public", playerID);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    // socket.emit(
+    //   "leave-room",
+    //   "36d2f9e5-d94f-44f6-a23a-2ab5350b9ce722321",
+    //   playerID
+    // );
+    // setTimeout(() => {
+    //   socket.emit(
+    //     "search-for-game",
+    //     "36d2f9e5-d94f-44f6-a23a-2ab5350b9ce722321",
+    //     playerID
+    //   );
+    // }, 2000);
+    socket.on("game-found", (roomID: string) => {
+      socket.emit("join-room", roomID, playerID);
+    });
 
     //on Player 1
     socket.on("player-connected", (userId: string) => {
       setNbPlayer(nbPlayer + 1);
       if (!gameStarted && isPlayer1) {
+        setShowModal(false);
         setIsPlayer1(true);
 
         console.log("Player Joined: " + userId);
@@ -113,6 +152,7 @@ export default function Grid() {
 
         console.log(playerType ? "Player 1" : "Player 2");
         if (!gameStarted) {
+          setShowModal(false);
           console.log("Game is Ready");
           setIsPlayer1(false);
           generateMaze(getInitialGrid());
@@ -146,6 +186,13 @@ export default function Grid() {
         if (newGrid.length > 0) setGrid(newGrid);
       }
     );
+
+    socket.on("receive-message", (message: string) => {
+      setMessages((messages) => [
+        ...messages,
+        { text: message, isSentByCurrentUser: false },
+      ]);
+    });
   }, []);
 
   const getInitialGrid = () => {
@@ -652,57 +699,86 @@ export default function Grid() {
   const handleMouseUp = () => {
     setMouseIsPressed(false);
   };
+  const sendMessage = (event: any) => {
+    event.preventDefault();
+
+    if (message) {
+      setMessages((messages) => [
+        ...messages,
+        { text: message, isSentByCurrentUser: true },
+      ]);
+      socket.emit("send-message", message, () => setMessage(""));
+      setMessage("");
+    }
+  };
+
   return (
-    <>
-      <ActionBar
-        checkMovement={checkMovement}
-        actionsLeft={actionsLeft}
-        isPlayer1={isPlayer1}
-      />
-      <Card className="mt-2">
-        <Card.Body>
-          <div className="d-flex justify-content-center">
-            <table className="board" id="board">
-              <tbody>
-                {grid.map((row: Array<Node>, rowIdx) => {
-                  return (
-                    <tr key={rowIdx}>
-                      {row.map((node: Node, nodeIdx: number) => {
-                        return (
-                          <NodeComponent
-                            key={nodeIdx}
-                            col={node.col}
-                            row={node.row}
-                            isWall={node.isWall}
-                            isEndZone={node.isEndZone}
-                            isPlayer1={node.isPlayer1}
-                            isPlayer2={node.isPlayer2}
-                            recentlyBuilt={node.recentlyBuilt}
-                            tile={node.tile}
-                            isTornadoX={node.isTornadoX}
-                            isTornadoY={node.isTornadoY}
-                            nextTornadoX={node.nextTornadoX}
-                            nextTornadoY={node.nextTornadoY}
-                            isBonus={node.isBonus}
-                            mouseIsPressed={mouseIsPressed}
-                            onMouseDown={(row: number, col: number) =>
-                              handleMouseDown(row, col)
-                            }
-                            // onMouseEnter={(row: number, col: number) =>
-                            //   handleMouseEnter(row, col)
-                            // }
-                            onMouseUp={() => handleMouseUp()}
-                          ></NodeComponent>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </Card.Body>
-      </Card>
-    </>
+    <Row>
+      <Col md={8}>
+        <ActionBar
+          checkMovement={checkMovement}
+          actionsLeft={actionsLeft}
+          isPlayer1={isPlayer1}
+        />
+        <ModalLoading showModal={showModal} roomID={roomID} />
+        <Card className="mt-2">
+          <Card.Body>
+            <div className="d-flex justify-content-center">
+              <table className="board" id="board">
+                <tbody>
+                  {grid.map((row: Array<Node>, rowIdx) => {
+                    return (
+                      <tr key={rowIdx}>
+                        {row.map((node: Node, nodeIdx: number) => {
+                          return (
+                            <NodeComponent
+                              key={nodeIdx}
+                              col={node.col}
+                              row={node.row}
+                              isWall={node.isWall}
+                              isEndZone={node.isEndZone}
+                              isPlayer1={node.isPlayer1}
+                              isPlayer2={node.isPlayer2}
+                              recentlyBuilt={node.recentlyBuilt}
+                              tile={node.tile}
+                              isTornadoX={node.isTornadoX}
+                              isTornadoY={node.isTornadoY}
+                              nextTornadoX={node.nextTornadoX}
+                              nextTornadoY={node.nextTornadoY}
+                              isBonus={node.isBonus}
+                              mouseIsPressed={mouseIsPressed}
+                              onMouseDown={(row: number, col: number) =>
+                                handleMouseDown(row, col)
+                              }
+                              // onMouseEnter={(row: number, col: number) =>
+                              //   handleMouseEnter(row, col)
+                              // }
+                              onMouseUp={() => handleMouseUp()}
+                            ></NodeComponent>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </Card.Body>
+        </Card>
+      </Col>
+      <Col md={4}>
+        <ControlCard
+          checkMovement={checkMovement}
+          actionsLeft={actionsLeft}
+          isPlayer1={isPlayer1}
+        />
+        <Chat
+          messages={messages}
+          message={message}
+          setMessage={setMessage}
+          sendMessage={sendMessage}
+        />
+      </Col>
+    </Row>
   );
 }

@@ -4,7 +4,7 @@ import Container from "../components/layouts/Container";
 import { animateBall } from "../components/ballAnimation";
 
 export default function Main() {
-  animateBall(35);
+  animateBall(40);
 
   return (
     <div>

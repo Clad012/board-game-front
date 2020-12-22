@@ -1,0 +1,112 @@
+.tornado-guide {
+  height: 20px;
+  width: 20px;
+  display: inline-block;
+  margin-right: 2px;
+  position: relative;
+}
+
+.both-tornados-guide:before {
+  content: "•";
+  position: absolute;
+  color: rgb(185, 131, 235);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  animation: bothTornadoAnimation 2s ease infinite;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+@keyframes bothTornadoAnimation {
+  0% {
+    color: transparent;
+  }
+
+  50% {
+    color: rgba(94, 56, 233, 0.76);
+  }
+
+  100% {
+    color: transparent;
+  }
+}
+.active-tornado-guide {
+  background: white;
+  transition: all 0.5 ease;
+
+  animation: tornadoAnimation 2s ease infinite;
+}
+
+@keyframes tornadoAnimation {
+  0% {
+    background: white;
+  }
+
+  50% {
+    background: rgba(243, 40, 67, 0.76);
+  }
+
+  100% {
+    background: white;
+  }
+}
+
+.next-tornado-guide {
+  background: white;
+  transition: all 0.5 ease;
+  animation: nextTornadoAnimationY 2s ease infinite;
+}
+@keyframes nextTornadoAnimationY {
+  0% {
+    background: white;
+  }
+
+  50% {
+    background: rgba(94, 56, 233, 0.76);
+  }
+
+  100% {
+    background: white;
+  }
+}
+.tornado-guide:nth-child(1n) {
+  animation-delay: 0.15s;
+}
+
+.tornado-guide:nth-child(2n) {
+  animation-delay: 0.25s;
+}
+
+.tornado-guide:nth-child(3n) {
+  animation-delay: 0.35s;
+}
+
+.tornado-guide:nth-child(4n) {
+  animation-delay: 0.45s;
+}
+.bonus-guide {
+  border-radius: 50% !important;
+  background: rgb(10, 238, 162);
+  animation: bonusAnimation 0.5s ease infinite;
+}
+@keyframes bonusAnimation {
+  0% {
+    transform: scale(0.2);
+    background: rgb(64, 101, 224);
+  }
+  25% {
+    background: rgb(64, 101, 224);
+    transform: scale(0.6);
+  }
+
+  50% {
+    transform: scale(0.8);
+  }
+  75% {
+    transform: scale(0.6);
+  }
+  100% {
+    transform: scale(0.2);
+  }
+}

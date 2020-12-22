@@ -1,14 +1,10 @@
 import React from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Card from "react-bootstrap/Card";
 import PlayModeCard from "../components/UI/PlayMode";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Main() {
-  const privateRoom = () => {};
-
-  const publicRoom = () => {};
-
   return (
     <div className="pt-4">
       <Row className="justify-content-center pt-4">
@@ -16,7 +12,8 @@ export default function Main() {
           <PlayModeCard
             title="Private Room"
             description="Créer une chambre privée où vous inviter vos amis pour vous rejoindre"
-            link="Go Now"
+            link={`/play?room=private&room_id=${uuidv4()}`}
+            action="Go Now"
             image="/imgs/matching.svg"
           />
         </Col>
@@ -24,7 +21,8 @@ export default function Main() {
           <PlayModeCard
             title="Public Room"
             description="Chercher autres joueurs à rejoindre"
-            link="Go Now"
+            link={`/play?room=public`}
+            action="Go Now"
             image="/imgs/private.svg"
           />
         </Col>

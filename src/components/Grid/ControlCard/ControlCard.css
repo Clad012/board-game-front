@@ -1,0 +1,90 @@
+.pad {
+  width: 30px;
+  height: 30px;
+  background: rgb(49, 48, 48);
+  /* transition: background-color 0.2s ease; */
+  cursor: pointer;
+  text-align: center;
+}
+.pad > i {
+  color: white;
+}
+.pad-up {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  border-top-right-radius: 50%;
+  border-top-left-radius: 50%;
+}
+.pad-right {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+.pad-down {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border-bottom-right-radius: 50%;
+  border-bottom-left-radius: 50%;
+}
+.pad-left {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+}
+
+.pad-center {
+  width: 30px;
+  height: 30px;
+  background: rgb(49, 48, 48);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+.joystick-container {
+  position: relative;
+  width: 60px;
+  height: 60px;
+
+  margin: auto;
+  margin-left: 35%;
+  margin-bottom: 50px;
+  margin-top: 20px;
+}
+.pad:hover {
+  background: rgb(83, 82, 82);
+}
+.pad:active {
+  background: rgb(226, 169, 12);
+}
+.arrow {
+  border: solid rgb(193, 190, 196);
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+}
+
+.left {
+  transform: rotate(135deg);
+  -webkit-transform: rotate(135deg);
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}

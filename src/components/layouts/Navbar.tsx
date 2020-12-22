@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 
+import UIGuide from "../UI/Guide/UIGuide";
+
 export default function NavbarComponent() {
+  const [showGuideModal, setShowGuideModal] = useState(false);
+
+  const handleClose = () => {
+    setShowGuideModal(false);
+  };
+
   return (
     <>
       <Navbar bg="light" expand="lg">
@@ -18,7 +26,13 @@ export default function NavbarComponent() {
               <NavDropdown.Item href="#action/3.2">
                 Another action
               </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+              <NavDropdown.Item
+                onClick={() => {
+                  setShowGuideModal(true);
+                }}
+              >
+                Open Guide
+              </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="#action/3.4">
                 Separated link
@@ -27,6 +41,7 @@ export default function NavbarComponent() {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
+      <UIGuide showGuideModal={showGuideModal} handleClose={handleClose} />
     </>
   );
 }

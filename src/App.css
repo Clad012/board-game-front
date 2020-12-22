@@ -66,8 +66,24 @@ body {
   height: 280px;
 }
 .ball {
-  position: absolute;
-  /* border-radius: 100%; */
+  position: fixed;
+  border-radius: 100%;
   opacity: 0.7;
   z-index: -5 !important;
+}
+.rectangle {
+  position: fixed;
+  opacity: 0.7;
+  z-index: -5 !important;
+}
+.modal {
+  backdrop-filter: blur(5px);
+}
+.modal-dialog {
+  top: 30%;
+
+  box-shadow: 0 1px 15px 0 rgba(71, 44, 44, 0.3);
+}
+.modal-content {
+  border: none;
 }

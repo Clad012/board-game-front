@@ -1,11 +1,12 @@
 import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
 
+import { Link } from "react-router-dom";
 interface PlayModeCardProps {
   image: string;
   title: string;
   description: string;
   link: string;
+  action: string;
 }
 
 export default function PlayMode(props: PlayModeCardProps) {
@@ -15,7 +16,7 @@ export default function PlayMode(props: PlayModeCardProps) {
       <Card.Body>
         <Card.Title>{props.title}</Card.Title>
         <Card.Text>{props.description}</Card.Text>
-        <Button variant="primary">{props.link}</Button>
+        <Link to={props.link}>{props.action}</Link>
       </Card.Body>
     </Card>
   );
