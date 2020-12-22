@@ -6,7 +6,7 @@ export function animateBall(ballNb) {
 
   for (let i = 0; i < numBalls; i++) {
     let ball = document.createElement("div");
-    const className = i % 2 == 0 ? "ball" : "rectangle";
+    const className = i % 2 === 0 ? "ball" : "rectangle";
     ball.classList.add(className);
     ball.style.background = colors[Math.floor(Math.random() * colors.length)];
     ball.style.left = `${Math.floor(Math.random() * 100)}vw`;
@@ -26,7 +26,7 @@ export function animateBall(ballNb) {
       y: Math.random() * 12,
     };
 
-    let anim = el.animate(
+    el.animate(
       [
         { transform: "translate(0, 0)" },
         { transform: `translate(${to.x}rem, ${to.y}rem)` },

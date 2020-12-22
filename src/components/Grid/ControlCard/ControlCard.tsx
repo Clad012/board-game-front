@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Card from "react-bootstrap/Card";
 
 import "./ControlCard.css";
@@ -27,7 +27,7 @@ for (let i = 1; i <= 4; i++) {
 }
 
 export default function ControlCard(props: actionType) {
-  const { checkMovement, actionsLeft, isPlayer1 } = props;
+  const { checkMovement } = props;
   return (
     <div>
       <Card>

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
 import InputGroup from "react-bootstrap/InputGroup";
@@ -16,8 +16,6 @@ export default function ModaLoading(props: modalTypes) {
   const handleClose = () => {
     return;
   };
-  const [copySuccess, setCopySuccess] = useState("");
-  const textAreaRef = useRef(null);
 
   let myInput: any = null;
   const copyToClipboard = () => {

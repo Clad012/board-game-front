@@ -55,8 +55,8 @@ export default function Grid() {
   const [actionsLeft, setActionsLeft] = useState(0);
   const [showModal, setShowModal] = useState(true);
 
-  const handleClose = () => setShowModal(false);
-  const handleShow = () => setShowModal(true);
+  // const handleClose = () => setShowModal(false);
+  // const handleShow = () => setShowModal(true);
   const [
     nextNodeCoordinates,
     setNextTornadoCoordiantes,
@@ -94,7 +94,7 @@ export default function Grid() {
     const searchParams = new URLSearchParams(location.search);
     console.log(searchParams.has("room"));
     if (searchParams.has("room") && searchParams.has("room_id")) {
-      if (searchParams.get("room") == "private") {
+      if (searchParams.get("room") === "private") {
         setRoomID(searchParams.get("room_id"));
         socket.emit(
           "search-for-game",
@@ -343,9 +343,9 @@ export default function Grid() {
 
       generateNextTornado();
       generateTornado();
-      if (nbTurns % 3 == 0 || nbTurns == 1) generateBonus();
+      if (nbTurns % 3 === 0 || nbTurns === 1) generateBonus();
 
-      if (nbTurns % 4 == 0) clearBonus();
+      if (nbTurns % 4 === 0) clearBonus();
 
       if (nbTurns > 0) {
         clearTornado();
@@ -547,7 +547,7 @@ export default function Grid() {
     const col = randomTornadoSpawnCoordinate(1, 22, false);
 
     console.log({ row, col });
-    if (row != -1 && col != -1) {
+    if (row !== -1 && col !== -1) {
       const newGrid: Node[][] = grid.slice();
       console.log("------- Next Created -------");
 
@@ -569,7 +569,7 @@ export default function Grid() {
   };
 
   const generateTornado = () => {
-    var tornados: NodeCoordinates[] = tornadoList.slice();
+    // var tornados: NodeCoordinates[] = tornadoList.slice();
     const varTornado = currentTornado;
     if (varTornado) {
       const newGrid: Node[][] = grid.slice();
@@ -639,7 +639,7 @@ export default function Grid() {
         }
       });
     }
-    var el = document.querySelectorAll(".tornado-class-x");
+    el = document.querySelectorAll(".tornado-class-x");
     if (el) {
       el.forEach((x) => {
         if (x.classList.contains("tornado-x")) {
