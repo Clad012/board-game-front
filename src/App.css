@@ -83,3 +83,18 @@ body {
   box-shadow: 0 1px 15px 0 rgba(71, 44, 44, 0.3);
   border: none;
 }
+
+.replay {
+  background: rgb(88, 37, 226);
+  padding: 5px;
+  display: block;
+  color: white;
+  font-weight: 600;
+  margin-top: 60px;
+  text-decoration: none;
+  transition: all 0.5 ease;
+}
+.replay:hover {
+  background: rgb(238, 188, 24);
+  color: rgb(58, 58, 58);
+}

@@ -39,16 +39,16 @@ interface NodeCoordinates {
 const playerID = uuidv4();
 
 export default function Grid() {
-  const [socket, setSocket] = useState(
-    io.connect("https://board-game-server.glitch.me/", {
-      transports: ["websocket", "polling"],
-    })
-  );
   // const [socket, setSocket] = useState(
-  //   io.connect("http://localhost:5000/", {
+  //   io.connect("https://board-game-server.glitch.me/", {
   //     transports: ["websocket", "polling"],
   //   })
   // );
+  const [socket, setSocket] = useState(
+    io.connect("http://localhost:5000/", {
+      transports: ["websocket", "polling"],
+    })
+  );
   const [grid, setGrid] = useState<Node[][]>([]);
   const [mouseIsPressed, setMouseIsPressed] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
@@ -78,6 +78,9 @@ export default function Grid() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<MessageType[]>([]);
 
+  const [gameEnded, setGameEnded] = useState(false);
+  const [playerWon, setPlayerWon] = useState(0);
+
   const player1X = 23;
   const player1Y = 1;
   const player2X = 1;
@@ -96,6 +99,12 @@ export default function Grid() {
   const location = useLocation();
 
   useEffect(() => {
+    setSocket(
+      io.connect("http://localhost:5000/", {
+        transports: ["websocket", "polling"],
+      })
+    );
+
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.has("room") && searchParams.has("room_id")) {
       if (searchParams.get("room") === "private") {
@@ -125,8 +134,8 @@ export default function Grid() {
     //     playerID
     //   );
     // }, 2000);
-    socket.on("game-found", (roomID: string) => {
-      socket.emit("join-room", roomID, playerID);
+    socket.on("game-found", (roomID: string, elasticRoom: string) => {
+      socket.emit("join-room", roomID, playerID, elasticRoom);
     });
 
     //on Player 1
@@ -152,6 +161,8 @@ export default function Grid() {
     socket.on(
       "game-ready",
       (userId: string, playerType: boolean, nbOfPlayers: number) => {
+        socket.emit("lock-room");
+
         toast("⚔️ Partie commence...");
         setNbPlayer(nbOfPlayers + 1);
         if (!gameStarted) {
@@ -188,6 +199,12 @@ export default function Grid() {
         if (newGrid.length > 0) setGrid(newGrid);
       }
     );
+
+    socket.on("game-ended", (player: number) => {
+      setGameEnded(true);
+      setPlayerWon(player);
+      setShowModal(true);
+    });
 
     socket.on("receive-message", (message: string) => {
       setMessages((messages) => [
@@ -452,8 +469,12 @@ export default function Grid() {
       setPlayerY(y);
       setGrid(newGrid);
       if (newGrid[x][y].isEndZone) {
-        alert("You've WON!");
         socket.emit("action-done", newGrid, x, y);
+        socket.emit("game-ended", isPlayer1 ? 1 : 2);
+
+        setGameEnded(true);
+        setPlayerWon(isPlayer1 ? 1 : 2);
+        setShowModal(true);
       } else {
         handleEndTurn(x, y, checkBonus(x, y, actionsLeft - action));
       }
@@ -705,7 +726,13 @@ export default function Grid() {
           actionsLeft={actionsLeft}
           isPlayer1={isPlayer1}
         /> */}
-        <ModalLoading showModal={showModal} roomID={roomID} />
+        <ModalLoading
+          showModal={showModal}
+          roomID={roomID}
+          gameEnded={gameEnded}
+          playerWon={playerWon}
+          isPlayer1={isPlayer1}
+        />
         <Card>
           <Card.Body>
             <div className="d-flex justify-content-center">

@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 export default function Main() {
   return (
     <div className="pt-4">
+      <h2 className="text-center">&nbsp;</h2>
       <Row className="justify-content-center pt-4">
         <Col md={6} className="d-flex justify-content-center ">
           <PlayModeCard
