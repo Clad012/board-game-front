@@ -40,9 +40,7 @@ const playerID = uuidv4();
 
 export default function Grid() {
   const [socket, setSocket] = useState(
-    io.connect("https://board-game-server.glitch.me/", {
-      transports: ["websocket", "polling"],
-    })
+    io.connect("https://board-game-server.glitch.me/")
   );
   // const [socket, setSocket] = useState(
   //   io.connect("http://localhost:5000/", {
