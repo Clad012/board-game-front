@@ -39,16 +39,16 @@ interface NodeCoordinates {
 const playerID = uuidv4();
 
 export default function Grid() {
-  // const [socket, setSocket] = useState(
-  //   io.connect("https://board-game-server.glitch.me/", {
-  //     transports: ["websocket", "polling"],
-  //   })
-  // );
   const [socket, setSocket] = useState(
-    io.connect("http://localhost:5000/", {
+    io.connect("https://board-game-server.glitch.me/", {
       transports: ["websocket", "polling"],
     })
   );
+  // const [socket, setSocket] = useState(
+  //   io.connect("http://localhost:5000/", {
+  //     transports: ["websocket", "polling"],
+  //   })
+  // );
   const [grid, setGrid] = useState<Node[][]>([]);
   const [mouseIsPressed, setMouseIsPressed] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
