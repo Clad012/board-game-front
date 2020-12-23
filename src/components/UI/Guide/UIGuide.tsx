@@ -6,18 +6,25 @@ import "./UIGuide.css";
 
 const nextTornados: JSX.Element[] = [];
 for (let i = 1; i <= 4; i++) {
-  nextTornados.push(<span className="tornado-guide next-tornado-guide"></span>);
+  nextTornados.push(
+    <span className="tornado-guide next-tornado-guide" key={i}></span>
+  );
 }
 
 const tornados: JSX.Element[] = [];
 for (let i = 1; i <= 4; i++) {
-  tornados.push(<span className="tornado-guide active-tornado-guide"></span>);
+  tornados.push(
+    <span className="tornado-guide active-tornado-guide" key={i}></span>
+  );
 }
 
 const bothTornado: JSX.Element[] = [];
 for (let i = 1; i <= 4; i++) {
   bothTornado.push(
-    <span className="tornado-guide active-tornado-guide both-tornados-guide"></span>
+    <span
+      className="tornado-guide active-tornado-guide both-tornados-guide"
+      key={i}
+    ></span>
   );
 }
 

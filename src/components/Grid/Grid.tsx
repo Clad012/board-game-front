@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ActionBar from "./ActionBar/ActionBar";
+// import ActionBar from "./ActionBar/ActionBar";
 import ControlCard from "./ControlCard/ControlCard";
 import Chat from "./Chat/Chat";
 
@@ -11,7 +11,8 @@ import Col from "react-bootstrap/Col";
 import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
 interface Node {
   col: number;
   row: number;
@@ -38,12 +39,16 @@ interface NodeCoordinates {
 const playerID = uuidv4();
 
 export default function Grid() {
+  // const [socket, setSocket] = useState(
+  //   io.connect("https://board-game-server.glitch.me/", {
+  //     transports: ["websocket", "polling"],
+  //   })
+  // );
   const [socket, setSocket] = useState(
-    io.connect("https://board-game-server.glitch.me/", {
+    io.connect("http://localhost:5000/", {
       transports: ["websocket", "polling"],
     })
   );
-
   const [grid, setGrid] = useState<Node[][]>([]);
   const [mouseIsPressed, setMouseIsPressed] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
@@ -92,7 +97,6 @@ export default function Grid() {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    console.log(searchParams.has("room"));
     if (searchParams.has("room") && searchParams.has("room_id")) {
       if (searchParams.get("room") === "private") {
         setRoomID(searchParams.get("room_id"));
@@ -127,12 +131,12 @@ export default function Grid() {
 
     //on Player 1
     socket.on("player-connected", (userId: string) => {
+      toast("⚔️ Partie commence...");
       setNbPlayer(nbPlayer + 1);
       if (!gameStarted && isPlayer1) {
         setShowModal(false);
         setIsPlayer1(true);
 
-        console.log("Player Joined: " + userId);
         socket.emit("game-ready", playerID, !isPlayer1, nbPlayer);
         generateMaze(getInitialGrid());
         // setTimeout(() => {
@@ -148,12 +152,10 @@ export default function Grid() {
     socket.on(
       "game-ready",
       (userId: string, playerType: boolean, nbOfPlayers: number) => {
+        toast("⚔️ Partie commence...");
         setNbPlayer(nbOfPlayers + 1);
-
-        console.log(playerType ? "Player 1" : "Player 2");
         if (!gameStarted) {
           setShowModal(false);
-          console.log("Game is Ready");
           setIsPlayer1(false);
           generateMaze(getInitialGrid());
           // setTimeout(() => {
@@ -166,6 +168,7 @@ export default function Grid() {
     );
 
     socket.on("turn-end", (nextTornado: NodeCoordinates) => {
+      toast.info("😎 C'est votre Tour!");
       if (nextTornado && nextTornado.col !== -1) {
         setCurrentTornado(nextTornado);
       }
@@ -180,7 +183,6 @@ export default function Grid() {
     socket.on(
       "action-done",
       (newGrid: Node[][], otherPlayerX: number, otherPlayerY: number) => {
-        console.log({ otherPlayerX, otherPlayerY });
         setOpponentX(otherPlayerX);
         setOpponentY(otherPlayerY);
         if (newGrid.length > 0) setGrid(newGrid);
@@ -237,7 +239,6 @@ export default function Grid() {
         var recentlyBuiltWallsArray: Node[] = recentlyBuiltWalls;
         recentlyBuiltWallsArray.push(node);
         setRecentlyBuiltWalls(recentlyBuiltWallsArray);
-        console.log(recentlyBuiltWalls);
       }
 
       setGrid(newGrid);
@@ -251,8 +252,6 @@ export default function Grid() {
   };
 
   const clearRecentlyBuiltWalls = (newGrid: Node[][]) => {
-    console.log({ recentlyBuiltWalls });
-    console.log({ newGrid });
     if (recentlyBuiltWalls.length > 0 && newGrid.length > 0) {
       recentlyBuiltWalls.forEach((el: Node) => {
         newGrid[el.row][el.col].recentlyBuilt = false;
@@ -337,21 +336,15 @@ export default function Grid() {
         tornados.push(currentTornado);
         setTornadoList(tornados);
       }
-
       clearRecentlyBuiltWalls(grid);
-      console.log({ tornadoList });
-
       generateNextTornado();
       generateTornado();
       if (nbTurns % 3 === 0 || nbTurns === 1) generateBonus();
-
       if (nbTurns % 4 === 0) clearBonus();
-
       if (nbTurns > 0) {
         clearTornado();
       }
       socket.emit("action-done", grid, playerX, playerY);
-      console.log({ nbTurns });
     }
   }, [isMyTurn]);
   useEffect(() => {
@@ -427,27 +420,21 @@ export default function Grid() {
           if (!grid[playerX - 1][playerY].isWall) {
             movePlayer(playerX - 1, playerY);
           }
-
           break;
         case "down":
           if (!grid[playerX + 1][playerY].isWall) {
             movePlayer(playerX + 1, playerY);
           }
-
           break;
-
         case "right":
           if (!grid[playerX][playerY + 1].isWall) {
             movePlayer(playerX, playerY + 1);
           }
-
           break;
-
         case "left":
           if (!grid[playerX][playerY - 1].isWall) {
             movePlayer(playerX, playerY - 1);
           }
-
           break;
       }
   };
@@ -461,11 +448,8 @@ export default function Grid() {
         newGrid[playerX][playerY].isPlayer2 = false;
         newGrid[x][y].isPlayer2 = true;
       }
-      console.log(newGrid[playerX][playerY]);
-
       setPlayerX(x);
       setPlayerY(y);
-      console.log("Moving...");
       setGrid(newGrid);
       if (newGrid[x][y].isEndZone) {
         alert("You've WON!");
@@ -477,6 +461,8 @@ export default function Grid() {
   };
   const checkBonus = (x: number, y: number, actions: number) => {
     if (grid[x][y].isBonus) {
+      toast.success("🔥 Bonus! Vous avez 2 actions de plus!");
+
       setActionsLeft(actions + 2);
       const newGrid: Node[][] = grid.slice();
       newGrid[x][y].isBonus = false;
@@ -501,19 +487,29 @@ export default function Grid() {
     setTimeout(() => {
       if (actions === 0) {
         checkTornadoHit(x, y);
-
+        toast.warning("✋ Votre tour est terminé!");
         setIsMyTurn(false);
         setNbTurns(nbTurns + 1);
         socket.emit("turn-end", nextNodeCoordinates);
-        console.log("Turn Ended");
-
         resetTornadoAnimation();
       }
     }, 500);
   };
 
+  const skipTurn = () => {
+    setActionsLeft(0);
+    setTimeout(() => {
+      checkTornadoHit(playerX, playerY);
+      toast.warning("✋ Votre tour est terminé!");
+      setIsMyTurn(false);
+      setNbTurns(nbTurns + 1);
+      socket.emit("turn-end", nextNodeCoordinates);
+      resetTornadoAnimation();
+    }, 500);
+  };
   const checkTornadoHit = (x: number, y: number) => {
     if (grid[x][y].isTornadoX || grid[x][y].isTornadoY) {
+      toast.error("☹️ Touché par la tournade! Respawn dans la case de départ");
       const newGrid: Node[][] = grid.slice();
       if (isPlayer1) {
         newGrid[x][y].isPlayer1 = false;
@@ -522,10 +518,8 @@ export default function Grid() {
         newGrid[x][y].isPlayer2 = false;
         newGrid[player2X][player2Y].isPlayer2 = true;
       }
-      console.log(newGrid[playerX][playerY]);
       setPlayerX(isPlayer1 ? player1X : player2X);
       setPlayerY(isPlayer1 ? player1Y : player2Y);
-      console.log("Moving...");
       setGrid(newGrid);
       socket.emit("action-done", newGrid, x, y);
     }
@@ -535,9 +529,7 @@ export default function Grid() {
   const handleMouseDown = (row: number, col: number) => {
     setMouseIsPressed(true);
     if (actionsLeft > 0 && isMyTurn) {
-      console.log(grid[row][col]);
       toggleWall(row, col);
-      console.log(grid[row][col]);
       //resetTornadoAnimation();
     }
   };
@@ -546,11 +538,8 @@ export default function Grid() {
     const row = randomTornadoSpawnCoordinate(1, 22, true);
     const col = randomTornadoSpawnCoordinate(1, 22, false);
 
-    console.log({ row, col });
     if (row !== -1 && col !== -1) {
       const newGrid: Node[][] = grid.slice();
-      console.log("------- Next Created -------");
-
       for (let i = 0; i < maxGridX; i++) {
         if (!newGrid[i][col].isEndZone) newGrid[i][col].nextTornadoX = true;
       }
@@ -575,8 +564,6 @@ export default function Grid() {
       const newGrid: Node[][] = grid.slice();
       const tornadoX = varTornado.row;
       const tornadoY = varTornado.col;
-      console.log({ varTornado });
-      console.log("-------Tornado Created & Next Removed -------");
       for (let i = 0; i < maxGridX; i++) {
         if (!newGrid[i][tornadoY].isEndZone) {
           newGrid[i][tornadoY].nextTornadoX = false;
@@ -602,7 +589,6 @@ export default function Grid() {
       const newGrid: Node[][] = grid.slice();
       const tornadoX = varTornado.row;
       const tornadoY = varTornado.col;
-
       const nextTornado = currentTornado;
       if ((nextTornado && nextTornado.col !== tornadoY) || !nextTornado)
         for (let i = 0; i < maxGridX; i++) {
@@ -620,7 +606,6 @@ export default function Grid() {
         }
       setGrid(newGrid);
       setActiveTornados(tornadosActive);
-      console.log({ tornadosActive: tornadosActive });
     }
   };
 
@@ -715,11 +700,11 @@ export default function Grid() {
   return (
     <Row>
       <Col md={8}>
-        <ActionBar
+        {/* <ActionBar
           checkMovement={checkMovement}
           actionsLeft={actionsLeft}
           isPlayer1={isPlayer1}
-        />
+        /> */}
         <ModalLoading showModal={showModal} roomID={roomID} />
         <Card className="mt-2">
           <Card.Body>
@@ -763,6 +748,7 @@ export default function Grid() {
                 </tbody>
               </table>
             </div>
+            <ToastContainer />
           </Card.Body>
         </Card>
       </Col>
@@ -771,6 +757,9 @@ export default function Grid() {
           checkMovement={checkMovement}
           actionsLeft={actionsLeft}
           isPlayer1={isPlayer1}
+          actions={actionsLeft}
+          isMyTurn={isMyTurn}
+          skipTurn={skipTurn}
         />
         <Chat
           messages={messages}

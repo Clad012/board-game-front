@@ -88,3 +88,55 @@
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
 }
+
+.myTurn {
+  display: block;
+  background: rgb(9, 245, 60);
+  color: rgb(252, 252, 252);
+  border-radius: 5px;
+  padding: 5px;
+  font-weight: 600;
+}
+.hisTurn {
+  display: block;
+  background: rgb(230, 63, 63);
+  color: rgb(252, 252, 252);
+  border-radius: 5px;
+  padding: 5px;
+  font-weight: 600;
+}
+.action {
+  display: inline-block;
+  background: rgb(159, 9, 245);
+  color: white;
+  border-radius: 5px;
+  padding: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  font-weight: 600;
+}
+.player-1 {
+  display: inline-block;
+  background: rgb(37, 67, 233);
+  color: white;
+  border-radius: 5px;
+  padding: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  font-weight: 600;
+}
+
+.player-2 {
+  display: inline-block;
+  background: rgb(226, 18, 115);
+  color: white;
+  border-radius: 5px;
+  padding: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  font-weight: 600;
+}
+.pass-tour {
+  background: rgb(247, 129, 32);
+  border: none;
+}

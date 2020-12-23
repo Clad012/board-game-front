@@ -32,30 +32,41 @@ export default function ModaLoading(props: modalTypes) {
         onHide={handleClose}
         backdrop={false}
         backdropClassName="blurBackground"
+        className="loading-modal"
+        centered
       >
         <Modal.Body className="text-center">
-          <h6 className="title">En attente d'un autre joueur...</h6>
-          <Spinner animation="border" className="mt-2 mb-4" variant="primary" />
-          {roomID && (
-            <div className="text-left">
-              <p>Inviter vos amis via ce lien: </p>
-              <InputGroup className="mb-3">
-                <FormControl
-                  placeholder="Recipient's username"
-                  aria-label="Recipient's username"
-                  aria-describedby="basic-addon2"
-                  ref={(ref: any) => (myInput = ref)}
-                  value={`https://board-game.vercel.app/play?room=private&room_id=${roomID}`}
-                  readOnly
-                />
-                <InputGroup.Append>
-                  <Button variant="outline-secondary" onClick={copyToClipboard}>
-                    🗒 Copier
-                  </Button>
-                </InputGroup.Append>
-              </InputGroup>
-            </div>
-          )}
+          <div>
+            <h6 className="title">En attente d'un autre joueur...</h6>
+            <Spinner
+              animation="border"
+              className="mt-2 mb-4"
+              variant="primary"
+            />
+            {roomID && (
+              <div className="text-left">
+                <p>Inviter vos amis via ce lien: </p>
+                <InputGroup className="mb-3">
+                  <FormControl
+                    placeholder="Recipient's username"
+                    aria-label="Recipient's username"
+                    aria-describedby="basic-addon2"
+                    ref={(ref: any) => (myInput = ref)}
+                    value={`https://board-game.vercel.app/play?room=private&room_id=${roomID}`}
+                    readOnly
+                  />
+                  <InputGroup.Append>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={copyToClipboard}
+                    >
+                      🗒 Copier
+                    </Button>
+                  </InputGroup.Append>
+                </InputGroup>
+              </div>
+            )}
+          </div>
           ;
         </Modal.Body>
       </Modal>
