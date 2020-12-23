@@ -706,7 +706,7 @@ export default function Grid() {
           isPlayer1={isPlayer1}
         /> */}
         <ModalLoading showModal={showModal} roomID={roomID} />
-        <Card className="mt-2">
+        <Card>
           <Card.Body>
             <div className="d-flex justify-content-center">
               <table className="board" id="board">
