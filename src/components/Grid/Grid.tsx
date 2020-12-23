@@ -98,11 +98,11 @@ export default function Grid() {
   const location = useLocation();
 
   useEffect(() => {
-    setSocket(
-      io.connect(SERVERAPI, {
-        transports: ["websocket", "polling"],
-      })
-    );
+    // setSocket(
+    //   io.connect(SERVERAPI, {
+    //     transports: ["websocket", "polling"],
+    //   })
+    // );
 
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.has("room") && searchParams.has("room_id")) {
