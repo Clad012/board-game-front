@@ -12,23 +12,6 @@ interface actionType {
   skipTurn: () => void;
 }
 
-const nextTornados: JSX.Element[] = [];
-for (let i = 1; i <= 4; i++) {
-  nextTornados.push(<span className="tornado-guide next-tornado-guide"></span>);
-}
-
-const tornados: JSX.Element[] = [];
-for (let i = 1; i <= 4; i++) {
-  tornados.push(<span className="tornado-guide active-tornado-guide"></span>);
-}
-
-const bothTornado: JSX.Element[] = [];
-for (let i = 1; i <= 4; i++) {
-  bothTornado.push(
-    <span className="tornado-guide active-tornado-guide both-tornados-guide"></span>
-  );
-}
-
 export default function ControlCard(props: actionType) {
   const { checkMovement, isMyTurn, actions, isPlayer1, skipTurn } = props;
   return (
@@ -36,30 +19,31 @@ export default function ControlCard(props: actionType) {
       <Card>
         <Card.Body>
           <div>
+            <span className={isMyTurn ? "myTurn" : "hisTurn"}>
+              {isMyTurn
+                ? "C'est Votre Tour!"
+                : "En attente de l'autre joueur..."}
+            </span>
+            <br />
             Vous êtes le{" "}
             <span className={isPlayer1 ? "player-1" : "player-2"}>
               {isPlayer1 ? "Joueur 1" : "Joueur 2"}
             </span>
             <hr />
             <div>
-              <span className={isMyTurn ? "myTurn" : "hisTurn"}>
-                {isMyTurn
-                  ? "C'est votre tour"
-                  : "C'est le tour de votre adversaire"}
-              </span>
-              <div className="mt-1">
-                <span className="action">{actions}</span> Actions restantes
+              <div className="control-container">
+                <span>
+                  <span className="action">{actions}</span>{" "}
+                  <span className="actions">Actions restantes</span>
+                </span>
+                {isMyTurn && (
+                  <span>
+                    <Button className="pass-tour" onClick={() => skipTurn()}>
+                      Passer
+                    </Button>
+                  </span>
+                )}
               </div>
-              {isMyTurn && (
-                <div className="mt-1">
-                  <Button
-                    className="btn-block pass-tour"
-                    onClick={() => skipTurn()}
-                  >
-                    Terminer mon tour
-                  </Button>
-                </div>
-              )}
             </div>
             <hr />
             <h6>Contrôleur de position</h6>

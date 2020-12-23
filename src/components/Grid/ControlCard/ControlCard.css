@@ -90,17 +90,18 @@
 }
 
 .myTurn {
-  display: block;
-  background: rgb(9, 245, 60);
-  color: rgb(252, 252, 252);
+  display: inline-block;
+  background: none;
+  color: rgb(49, 48, 48);
   border-radius: 5px;
   padding: 5px;
   font-weight: 600;
+  animation: pulseAnimation 1.5s ease infinite;
 }
 .hisTurn {
-  display: block;
-  background: rgb(230, 63, 63);
-  color: rgb(252, 252, 252);
+  display: inline-block;
+  background: none;
+  color: rgb(49, 48, 48);
   border-radius: 5px;
   padding: 5px;
   font-weight: 600;
@@ -117,7 +118,7 @@
 }
 .player-1 {
   display: inline-block;
-  background: rgb(37, 67, 233);
+  background: rgb(62, 133, 240);
   color: white;
   border-radius: 5px;
   padding: 5px;
@@ -128,7 +129,8 @@
 
 .player-2 {
   display: inline-block;
-  background: rgb(226, 18, 115);
+  background: rgb(247, 99, 168);
+
   color: white;
   border-radius: 5px;
   padding: 5px;
@@ -137,6 +139,51 @@
   font-weight: 600;
 }
 .pass-tour {
-  background: rgb(247, 129, 32);
+  background: rgb(193, 190, 196);
   border: none;
+  color: rgb(43, 42, 42);
+  font-weight: 600;
+}
+.pass-tour:hover {
+  background: rgb(238, 111, 26);
+}
+
+.control-container {
+  padding: 10px;
+  background: rgb(49, 48, 48);
+  display: block;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+.control-container > span {
+  display: inline-block;
+  margin-right: 5px;
+  font-weight: 600;
+}
+.actions {
+  color: white;
+}
+
+@keyframes pulseAnimation {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }

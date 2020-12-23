@@ -110,3 +110,22 @@
     transform: scale(0.2);
   }
 }
+.mur {
+  background-color: rgb(13, 53, 70);
+}
+.mur-strongify-guide {
+  background-image: linear-gradient(
+    45deg,
+    #d4d0db 25%,
+    #5f5370 25%,
+    #5f5370 50%,
+    #d4d0db 50%,
+    #d4d0db 75%,
+    #5f5370 75%,
+    #5f5370 100%
+  ) !important;
+  background-size: 8.49px 8.49px !important;
+}
+.tile-guide {
+  border: 1px solid rgb(175, 216, 248);
+}

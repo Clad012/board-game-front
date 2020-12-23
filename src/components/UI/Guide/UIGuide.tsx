@@ -43,7 +43,6 @@ export default function UIGuide(props: ModalType) {
         </Modal.Header>
 
         <Modal.Body>
-          <h6>Guide:</h6>
           <div>
             {nextTornados}
             <p>
@@ -71,6 +70,34 @@ export default function UIGuide(props: ModalType) {
           </div>
           <hr />
           <div>
+            <span className="mur tornado-guide"></span>
+            <p>
+              <strong>Mur</strong>: Vous ne pouvez traverser un mur, mais vous
+              pouvez le détruire.
+              <br></br>
+            </p>
+          </div>
+          <hr />
+          <div>
+            <span className="mur-strongify-guide tornado-guide"></span>
+            <p>
+              <strong>Mur fortifié</strong>: Vous ne pouvez détruire ce mur,
+              vous devez attendre un tour.
+              <br></br>
+            </p>
+          </div>
+          <hr />
+          <div>
+            <span className="tile-guide tornado-guide"></span>
+            <p>
+              <strong>Case vide</strong>: Vous pouvez vous déplacer sur les
+              cases vides ou vous pouvez construire des murs qui seront des murs
+              fortifiés pour un tour.
+              <br></br>
+            </p>
+          </div>
+          <hr />
+          <div>
             <span className="bonus-guide tornado-guide"></span>
             <p>
               <strong>Bonus</strong>: Donne 2 actions supplémentaires.
@@ -80,7 +107,9 @@ export default function UIGuide(props: ModalType) {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary">Fermer</Button>
+          <Button variant="secondary" onClick={() => handleClose()}>
+            Fermer
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

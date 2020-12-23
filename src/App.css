@@ -98,3 +98,16 @@ body {
   background: rgb(238, 188, 24);
   color: rgb(58, 58, 58);
 }
+.gameplay > p {
+  padding: 8px;
+  border-left: 4px solid rgb(112, 112, 231);
+  background: rgb(240, 239, 239);
+}
+a:hover {
+  text-decoration: none;
+  color: unset;
+}
+.description {
+  color: rgb(44, 44, 44);
+  font-weight: 400;
+}

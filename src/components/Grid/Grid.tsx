@@ -38,9 +38,9 @@ interface NodeCoordinates {
 }
 const playerID = uuidv4();
 const ISLOCAL = false;
-const SERVERAPI = ISLOCAL
-  ? "http://localhost:5000/"
-  : "https://board-game-server.glitch.me/";
+const GLITCH = "https://board-game-server.glitch.me/";
+const HEROKU = "https://shielded-lake-91092.herokuapp.com/";
+const SERVERAPI = ISLOCAL ? "http://localhost:5000/" : GLITCH;
 export default function Grid() {
   const [socket, setSocket] = useState(
     io.connect(SERVERAPI, {
@@ -58,6 +58,7 @@ export default function Grid() {
   const [gridGenerated, setGridGenerated] = useState(false);
   const [actionsLeft, setActionsLeft] = useState(0);
   const [showModal, setShowModal] = useState(true);
+  const [previouslyConnected, setPreviouslyConnected] = useState(false);
 
   // const handleClose = () => setShowModal(false);
   // const handleShow = () => setShowModal(true);
@@ -177,6 +178,18 @@ export default function Grid() {
       }
     );
 
+    socket.on("connection", function () {
+      if (previouslyConnected) {
+        // socket.emit("reconnection", lastKnownMessage);
+        console.log("I Reconnected");
+      } else {
+        // first connection; any further connections means we disconnected
+        setPreviouslyConnected(true);
+      }
+    });
+    socket.on("disconnect", function () {
+      console.log("I disconnected");
+    });
     socket.on("turn-end", (nextTornado: NodeCoordinates) => {
       toast.info("😎 C'est votre Tour!");
       if (nextTornado && nextTornado.col !== -1) {
@@ -529,7 +542,7 @@ export default function Grid() {
   };
   const checkTornadoHit = (x: number, y: number) => {
     if (grid[x][y].isTornadoX || grid[x][y].isTornadoY) {
-      toast.error("☹️ Touché par la tournade! Respawn dans la case de départ");
+      toast.error("☹️ Touché par une tournade! Respawn dans la case de départ");
       const newGrid: Node[][] = grid.slice();
       if (isPlayer1) {
         newGrid[x][y].isPlayer1 = false;
