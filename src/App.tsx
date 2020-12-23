@@ -7,6 +7,14 @@ function App() {
   return (
     <Router>
       <MainView />
+      <footer className="footer">
+        <div className="container">
+          <span className="text-muted">
+            Made with 💛 By{" "}
+            <a href="https://achraf-chaibi.tn/">Achraf Chaibi</a> .
+          </span>
+        </div>
+      </footer>
     </Router>
   );
 }
