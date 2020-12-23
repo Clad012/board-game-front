@@ -49,8 +49,8 @@ body {
   box-shadow: 0 1px 15px 0 rgba(123, 123, 123, 0.2);
 }
 .playmode {
-  width: 400px;
   cursor: pointer;
+  margin-top: 20px;
 }
 .floating {
   -webkit-transition: all 0.5s;
