@@ -114,3 +114,10 @@ a:hover {
 .text-title {
   color: rgb(44, 44, 44);
 }
+.navbar-light .navbar-toggler {
+  border: none !important;
+}
+.dropdown-menu {
+  border: none !important;
+  box-shadow: 0 1px 15px 0 rgba(123, 123, 123, 0.2);
+}
