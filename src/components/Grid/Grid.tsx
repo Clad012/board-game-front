@@ -40,7 +40,7 @@ const playerID = uuidv4();
 const ISLOCAL = false;
 const GLITCH = "https://board-game-server.glitch.me/";
 const HEROKU = "https://shielded-lake-91092.herokuapp.com/";
-const SERVERAPI = ISLOCAL ? "http://localhost:5000/" : GLITCH;
+const SERVERAPI = ISLOCAL ? "http://localhost:1337/" : GLITCH;
 export default function Grid() {
   const [socket, setSocket] = useState(
     io.connect(SERVERAPI, {
