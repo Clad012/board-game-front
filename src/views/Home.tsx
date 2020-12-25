@@ -17,9 +17,9 @@ export default function Main() {
         <Col md={6} className="d-flex justify-content-center ">
           <PlayModeCard
             title="Private Room"
-            description="Créer une chambre privée et vous inviter vos amis pour vous rejoindre."
+            description="Créer un salon privée et vous inviter vos amis pour vous rejoindre."
             link={`/play?room=private&room_id=${uuidv4()}`}
-            action="Créer une chambre"
+            action="Créer un salon privé"
             image="/imgs/matching.svg"
           />
         </Col>
