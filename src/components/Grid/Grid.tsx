@@ -39,8 +39,8 @@ interface NodeCoordinates {
 const playerID = uuidv4();
 const ISLOCAL = false;
 const GLITCH = "https://board-game-server.glitch.me/";
-const HEROKU = "https://shielded-lake-91092.herokuapp.com/";
-const SERVERAPI = ISLOCAL ? "http://localhost:1337/" : HEROKU;
+// const HEROKU = "https://shielded-lake-91092.herokuapp.com/";
+const SERVERAPI = ISLOCAL ? "http://localhost:1337/" : GLITCH;
 export default function Grid() {
   const [socket, setSocket] = useState(
     io.connect(SERVERAPI, {
@@ -62,10 +62,8 @@ export default function Grid() {
 
   // const handleClose = () => setShowModal(false);
   // const handleShow = () => setShowModal(true);
-  const [
-    nextNodeCoordinates,
-    setNextTornadoCoordiantes,
-  ] = useState<NodeCoordinates>({ row: -1, col: -1 });
+  const [nextNodeCoordinates, setNextTornadoCoordiantes] =
+    useState<NodeCoordinates>({ row: -1, col: -1 });
 
   const [tornadoPlaced, setTornadoPlaced] = useState(false);
   const [currentTornado, setCurrentTornado] = useState<NodeCoordinates>();
